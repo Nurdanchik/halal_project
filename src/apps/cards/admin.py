@@ -1,13 +1,14 @@
 from django.contrib import admin
-from django.contrib.gis.admin import OSMGeoAdmin
+from leaflet.admin import LeafletGeoAdmin
 
-from .models.card import Card
+from .models.card import Card, CardPhoto
+from .models.featured_card import FeaturedCard
 from .models.location import Place
 from .models.featured_card import FeaturedCard
 
 
 @admin.register(Place)
-class PlaceAdmin(OSMGeoAdmin):  # ← теперь карта OSM (OpenStreetMap)
+class PlaceAdmin(LeafletGeoAdmin):
     list_display = ('id', 'name')
     search_fields = ('name',)
 
@@ -17,9 +18,14 @@ class FeaturedCardInline(admin.TabularInline):
     extra = 1
 
 
+class CardPhotoInline(admin.TabularInline):
+    model = CardPhoto
+    extra = 1
+
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
-    list_display = ('id', 'description', 'category', 'location')
-    search_fields = ('description',)
-    list_filter = ('category',)
-    inlines = [FeaturedCardInline]
+    inlines = [CardPhotoInline]
+    list_display = ('description', 'category', 'start_work', 'stops_work')
+
+admin.site.register(CardPhoto)
+admin.site.register(FeaturedCard)

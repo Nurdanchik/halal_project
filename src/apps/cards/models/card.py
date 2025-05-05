@@ -32,6 +32,14 @@ class Card(BaseModel):
     verbose_name='Категория',
     )   
 
+    phone_number = models.CharField(
+    max_length=20,
+    verbose_name='Номер телефона',
+    help_text='Например: +996707123456',
+    blank=True,
+    null=True
+    )
+
     whatsapp = models.URLField(
         blank=True,
         null=True,
@@ -83,3 +91,18 @@ class Card(BaseModel):
     class Meta:
         verbose_name = 'Карточка'
         verbose_name_plural = 'Карточки'
+
+
+class CardPhoto(BaseModel):
+    """
+    Модель дополнительных фотографий заведения
+    """
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='photos', verbose_name='Карточка')
+    image = models.ImageField(upload_to='cards/photos/', verbose_name='Фото')
+
+    def __str__(self):
+        return f'Фото для {self.card}'
+    
+    class Meta:
+        verbose_name = 'Фото заведения'
+        verbose_name_plural = 'Фотки заведения'

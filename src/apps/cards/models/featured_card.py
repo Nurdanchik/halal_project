@@ -7,8 +7,6 @@ class FeaturedCard(models.Model):
         related_name='featured_entries',
         verbose_name='Карточка'
     )
-    added_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         verbose_name = 'Рекламная карточка'

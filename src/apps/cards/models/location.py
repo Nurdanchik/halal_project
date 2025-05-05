@@ -1,8 +1,27 @@
-from django.contrib.gis.db import models  # изменён импорт
+from django.db import models
 
 class Place(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Название места")
-    location = models.PointField(verbose_name="Локация")  # ← добавляем PointField
+    """
+    Модель локации.
+
+    Аттрибуты:
+    - name: название места
+    - latitude: широта
+    - longitude: долгота
+    """
+    name = models.CharField(
+        max_length=100, 
+        verbose_name="Название места"
+    )
+
+    latitude = models.FloatField(
+        verbose_name="Широта"
+    )
+
+    longitude = models.FloatField(
+        verbose_name="Долгота"
+    )
+    
 
     def __str__(self):
         return self.name
