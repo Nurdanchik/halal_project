@@ -17,10 +17,40 @@ class Card(BaseModel):
     - work_days: дни работы
     - location: ссылка на локацию
     - category: категория
+    - title: название заведения
+    - address: полный адрес
+    - type: тип заведения
+    - video: видео
     """
+
+    TYPE_CHOICES = [
+        ('food', 'Еда'),
+        ('religion', 'Религия'),
+        ('services', 'Услуги'),
+        ('business', 'Работа и бизнес'),
+        ('family', 'Семья и дети'),
+    ]
+
     face_img = models.ImageField(
         upload_to='cards/faces/',
         verbose_name='Главное фото'
+    )
+
+    type = models.CharField(
+        max_length=20,
+        choices=TYPE_CHOICES,
+        verbose_name='Тип заведения'
+    )   
+     
+    address = models.CharField(
+        max_length=255,
+        verbose_name='Полный адрес',
+        help_text='Например: г. Бишкек, ул. Ленина, 25'
+    ) 
+
+    title = models.CharField(
+        max_length=100,
+        verbose_name='Название заведения'
     )
 
     category = models.ForeignKey(
@@ -74,6 +104,13 @@ class Card(BaseModel):
         max_length=50,
         verbose_name='Дни работы',
         help_text='например: Пн-Вс или Пн-Пт'
+    )
+
+    video = models.FileField(
+        upload_to='cards/videos/',
+        blank=True,
+        null=True,
+        verbose_name='Видео заведения'
     )
 
     location = models.ForeignKey(

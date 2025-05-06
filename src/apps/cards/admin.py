@@ -4,7 +4,6 @@ from leaflet.admin import LeafletGeoAdmin
 from .models.card import Card, CardPhoto
 from .models.featured_card import FeaturedCard
 from .models.location import Place
-from .models.featured_card import FeaturedCard
 
 
 @admin.register(Place)
@@ -20,12 +19,23 @@ class FeaturedCardInline(admin.TabularInline):
 
 class CardPhotoInline(admin.TabularInline):
     model = CardPhoto
-    extra = 1
+    extra = 3 
+
 
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
-    inlines = [CardPhotoInline]
-    list_display = ('description', 'category', 'start_work', 'stops_work')
+    inlines = [CardPhotoInline, FeaturedCardInline]  
+    list_display = ('id', 'title', 'category', 'phone_number') 
+    search_fields = ('title', 'description')
 
-admin.site.register(CardPhoto)
-admin.site.register(FeaturedCard)
+
+@admin.register(CardPhoto)
+class CardPhotoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'card', 'image')
+    search_fields = ('card__title',)
+
+
+@admin.register(FeaturedCard)
+class FeaturedCardAdmin(admin.ModelAdmin):
+    list_display = ('id', 'card')
+    search_fields = ('card__title',)

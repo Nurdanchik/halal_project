@@ -12,13 +12,10 @@ class Review(BaseModel):
     - review: текст отзыва
     """
 
-    card = models.ForeignKey("cards.Card", on_delete=models.CASCADE)
+    card = models.ForeignKey("cards.Card", related_name='reviews', on_delete=models.CASCADE)
 
-    author = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='reviews',
-        verbose_name='Автор отзыва'
+    author = models.CharField(
+        max_length=255
     )
 
     STARS_CHOICES = [(i, str(i)) for i in range(1, 6)] 
@@ -26,6 +23,10 @@ class Review(BaseModel):
     stars = models.PositiveSmallIntegerField(
         choices=STARS_CHOICES,
         verbose_name='Оценка (звезды)'
+    )
+
+    is_approved = models.BooleanField(
+        default=False
     )
 
     review = models.TextField(verbose_name='Текст отзыва')
