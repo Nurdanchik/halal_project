@@ -31,7 +31,7 @@ class CardFullInfoSerializer(serializers.ModelSerializer):
             'id', 'title', 'face_img', 'category', 'type', 'description',
             'phone_number', 'whatsapp', 'telegram', 'site',
             'start_work', 'stops_work', 'work_days', 'location',
-            'address', 'video', 'photos', 'videos', 'reviews'
+            'address', 'city', 'video', 'photos', 'videos', 'reviews'
         ]
 
     def get_location(self, obj):

@@ -21,6 +21,7 @@ class Card(BaseModel):
     - address: полный адрес
     - type: тип заведения
     - video: видео заведения
+    - city: город заведения
     """
 
 
@@ -43,6 +44,14 @@ class Card(BaseModel):
         verbose_name='Полный адрес',
         help_text='Например: г. Бишкек, ул. Ленина, 25'
     ) 
+
+    city = models.CharField(
+    max_length=100,
+    verbose_name='Город',
+    help_text='Например: Бишкек',
+    blank=True,
+    null=True
+    )
 
     title = models.CharField(
         max_length=100,

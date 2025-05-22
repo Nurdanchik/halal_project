@@ -9,8 +9,11 @@ from apps.cards.serializers.card_serializers import CardListSerializer
 from apps.cards.serializers.featured_card_serializers import FeaturedCardListSerializer
 from apps.cards.services.card_service import get_all_cards
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-    
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from django.db.models import Q
+from rest_framework import generics
+
+
 
 from rest_framework.generics import RetrieveAPIView
 from apps.cards.models.card import Card
@@ -51,11 +54,69 @@ class FeaturedCardListAPIView(ListAPIView):
     pagination_class = CustomPagination
     
 
-class CardListAPIView(ListAPIView):
+class CardListAPIView(generics.ListAPIView):
+    queryset = Card.objects.all()
     serializer_class = CardListSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['category']  
-    pagination_class = CustomPagination
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='search',
+                description='Поиск по названию, типу, адресу, городу',
+                required=False,
+                type=str,
+                location=OpenApiParameter.QUERY,
+                examples=[
+                    OpenApiExample(
+                        "Поиск по городу Бишкек",
+                        value="Бишкек",
+                        summary="search=Бишкек"
+                    ),
+                    OpenApiExample(
+                        "Поиск по адресу Navat",
+                        value="Navat",
+                        summary="search=Navat"
+                    ),
+                ],
+            ),
+            OpenApiParameter(
+                name='city',
+                description='Фильтр по городу',
+                required=False,
+                type=str,
+                location=OpenApiParameter.QUERY,
+                examples=[
+                    OpenApiExample(
+                        "Фильтр по городу Бишкек",
+                        value="Бишкек",
+                        summary="city=Бишкек"
+                    )
+                ],
+            ),
+        ],
+        description=(
+            "Примеры запросов:\n"
+            "- /api/cards/?search=Бишкек\n"
+            "- /api/cards/?search=Navat\n"
+            "- /api/cards/?city=Бишкек\n"
+            "- /api/cards/?city=Бишкек&search=чайхана\n"
+        ),
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        return get_all_cards()
+        queryset = super().get_queryset()
+        search = self.request.query_params.get('search')
+        city = self.request.query_params.get('city')
+
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search) |
+                Q(type__type__icontains=search) |
+                Q(address__icontains=search) |
+                Q(city__icontains=search)
+            )
+        if city:
+            queryset = queryset.filter(city__icontains=city)
+        return queryset
