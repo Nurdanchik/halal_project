@@ -1,9 +1,10 @@
 from django.contrib import admin
 from leaflet.admin import LeafletGeoAdmin
 
-from .models.card import Card, CardPhoto
+from .models.card import Card, CardPhoto, CardVideo
 from .models.featured_card import FeaturedCard
 from .models.location import Place
+from .models.type import Type
 
 
 @admin.register(Place)
@@ -21,6 +22,9 @@ class CardPhotoInline(admin.TabularInline):
     model = CardPhoto
     extra = 3 
 
+
+admin.site.register(Type)
+admin.site.register(CardVideo)
 
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):

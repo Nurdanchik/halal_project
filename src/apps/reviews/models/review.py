@@ -10,6 +10,7 @@ class Review(BaseModel):
     - author: пользователь, оставивший отзыв
     - stars: оценка
     - review: текст отзыва
+    - is_approved: одобрен ли отзыв
     """
 
     card = models.ForeignKey("cards.Card", related_name='reviews', on_delete=models.CASCADE)

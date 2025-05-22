@@ -8,3 +8,8 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Review.objects.create(**validated_data, is_approved=False)
+    
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['id', 'author', 'review', 'stars']

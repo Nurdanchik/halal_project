@@ -20,27 +20,23 @@ class Card(BaseModel):
     - title: название заведения
     - address: полный адрес
     - type: тип заведения
-    - video: видео
+    - video: видео заведения
     """
 
-    TYPE_CHOICES = [
-        ('food', 'Еда'),
-        ('religion', 'Религия'),
-        ('services', 'Услуги'),
-        ('business', 'Работа и бизнес'),
-        ('family', 'Семья и дети'),
-    ]
 
     face_img = models.ImageField(
         upload_to='cards/faces/',
         verbose_name='Главное фото'
     )
 
-    type = models.CharField(
-        max_length=20,
-        choices=TYPE_CHOICES,
+    type = models.ForeignKey(
+        to='cards.Type',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='cards',
         verbose_name='Тип заведения'
-    )   
+    )
      
     address = models.CharField(
         max_length=255,
@@ -143,3 +139,26 @@ class CardPhoto(BaseModel):
     class Meta:
         verbose_name = 'Фото заведения'
         verbose_name_plural = 'Фотки заведения'
+
+
+class CardVideo(BaseModel):
+    """
+    Модель дополнительных видео заведения
+    """
+    card = models.ForeignKey(
+        Card,
+        on_delete=models.CASCADE,
+        related_name='videos',
+        verbose_name='Карточка'
+    )
+    video = models.FileField(
+        upload_to='cards/videos/',
+        verbose_name='Видео'
+    )
+
+    def __str__(self):
+        return f'Видео для {self.card}'
+    
+    class Meta:
+        verbose_name = 'Видео заведения'
+        verbose_name_plural = 'Видео заведения'
