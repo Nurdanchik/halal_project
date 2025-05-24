@@ -29,6 +29,8 @@ CORS_ALLOW_ALL_ORIGINS = True  # Разрешаем все источники
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://www.zahalal.ru",
+    "https://zahalal.ru",
     
 ]
 
@@ -48,8 +50,8 @@ CORS_ALLOWED_HEADERS = [
     "Access-Control-Allow-Origin", # Разрешаем заголовок Access-Control-Allow-Origin
 ]
 CSRF_TRUSTED_ORIGINS = [
-    
-
+    "https://www.zahalal.ru",
+    "https://zahalal.ru",
 ]
 
 SECURE_SSL_REDIRECT = True
