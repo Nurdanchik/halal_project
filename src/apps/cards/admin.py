@@ -1,5 +1,5 @@
 from django.contrib import admin
-from leaflet.admin import LeafletGeoAdmin
+
 
 from .models.card import Card, CardPhoto, CardVideo
 from .models.featured_card import FeaturedCard
@@ -7,10 +7,7 @@ from .models.location import Place
 from .models.type import Type
 
 
-@admin.register(Place)
-class PlaceAdmin(LeafletGeoAdmin):
-    list_display = ('id', 'name')
-    search_fields = ('name',)
+admin.site.register(Place)
 
 
 class FeaturedCardInline(admin.TabularInline):

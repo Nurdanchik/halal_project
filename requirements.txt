@@ -1,6 +1,0 @@
-django
-djangorestframework
-drf-spectacular
-django-redis
-django-leaflet
-gdal

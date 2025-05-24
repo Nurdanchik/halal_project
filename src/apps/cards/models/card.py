@@ -26,7 +26,7 @@ class Card(BaseModel):
 
 
     face_img = models.ImageField(
-        upload_to='cards/faces/',
+        upload_to='media/cards/faces/',
         verbose_name='Главное фото'
     )
 
@@ -112,7 +112,7 @@ class Card(BaseModel):
     )
 
     video = models.FileField(
-        upload_to='cards/videos/',
+        upload_to='media/cards/videos/',
         blank=True,
         null=True,
         verbose_name='Видео заведения'
@@ -140,7 +140,7 @@ class CardPhoto(BaseModel):
     Модель дополнительных фотографий заведения
     """
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='photos', verbose_name='Карточка')
-    image = models.ImageField(upload_to='cards/photos/', verbose_name='Фото')
+    image = models.ImageField(upload_to='media/cards/photos/', verbose_name='Фото')
 
     def __str__(self):
         return f'Фото для {self.card}'
@@ -161,7 +161,7 @@ class CardVideo(BaseModel):
         verbose_name='Карточка'
     )
     video = models.FileField(
-        upload_to='cards/videos/',
+        upload_to='media/cards/videos/',
         verbose_name='Видео'
     )
 
