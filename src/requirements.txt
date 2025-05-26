@@ -12,7 +12,6 @@ djangorestframework==3.16.0
 dotenv==0.9.9
 drf-spectacular==0.28.0
 drf-yasg==1.21.10
-GDAL==3.10.3
 inflection==0.5.1
 jsonschema==4.23.0
 jsonschema-specifications==2025.4.1
@@ -27,3 +26,4 @@ referencing==0.36.2
 rpds-py==0.24.0
 sqlparse==0.5.3
 uritemplate==4.1.1
+gunicorn

@@ -12,9 +12,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from django.db.models import Q
 from rest_framework import generics
-
-
-
 from rest_framework.generics import RetrieveAPIView
 from apps.cards.models.card import Card
 from apps.cards.serializers.card_full_info_serializers import CardFullInfoSerializer
@@ -54,7 +51,7 @@ class FeaturedCardListAPIView(ListAPIView):
     pagination_class = CustomPagination
     
 
-class CardListAPIView(generics.ListAPIView):
+class CardSearcherListAPIView(generics.ListAPIView):
     queryset = Card.objects.all()
     serializer_class = CardListSerializer
 
@@ -119,4 +116,50 @@ class CardListAPIView(generics.ListAPIView):
             )
         if city:
             queryset = queryset.filter(city__icontains=city)
+        return queryset
+    
+
+class CardListAPIView(generics.ListAPIView):
+    queryset = Card.objects.all()
+    serializer_class = CardListSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='cat_id',
+                description='Фильтр по ID категории',
+                required=False,
+                type=int,
+                location=OpenApiParameter.QUERY,
+                examples=[
+                    OpenApiExample(
+                        "Фильтр по категории с ID 1",
+                        value=1,
+                        summary="cat_id=1"
+                    ),
+                    OpenApiExample(
+                        "Фильтр по категории с ID 3",
+                        value=3,
+                        summary="cat_id=3"
+                    ),
+                ],
+            ),
+        ],
+        description=(
+            "Примеры запросов:\n"
+            "- /api/cards/\n"
+            "- /api/cards/?cat_id=1\n"
+            "- /api/cards/?cat_id=3\n"
+        ),
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        cat_id = self.request.query_params.get('cat_id')
+
+        if cat_id:
+            queryset = queryset.filter(category__id=cat_id)
+
         return queryset

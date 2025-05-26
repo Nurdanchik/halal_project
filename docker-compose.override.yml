@@ -11,6 +11,8 @@ services:
       PG_PASSWORD: ${PG_PASSWORD}
       PG_DATABASE: ${PG_DATABASE_USER}
 
+    ports:
+      - "8000:8000"
     env_file:
       - .env
 
