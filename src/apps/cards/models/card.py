@@ -12,15 +12,11 @@ class Card(BaseModel):
     - telegram: ссылка на Telegram
     - site: ссылка на сайт
     - description: описание
-    - start_work: время начала работы
-    - stops_work: время окончания работы
-    - work_days: дни работы
     - location: ссылка на локацию
     - category: категория
     - title: название заведения
     - address: полный адрес
     - type: тип заведения
-    - video: видео заведения
     - city: город заведения
     """
 
@@ -97,27 +93,6 @@ class Card(BaseModel):
         verbose_name='Описание'
     )
 
-    start_work = models.TimeField(
-        verbose_name='Время открытия'
-    )
-
-    stops_work = models.TimeField(
-        verbose_name='Время закрытия'
-    )
-
-    work_days = models.CharField(
-        max_length=50,
-        verbose_name='Дни работы',
-        help_text='например: Пн-Вс или Пн-Пт'
-    )
-
-    video = models.FileField(
-        upload_to='media/cards/videos/',
-        blank=True,
-        null=True,
-        verbose_name='Видео заведения'
-    )
-
     location = models.ForeignKey(
         'cards.Place',
         on_delete=models.SET_NULL,
@@ -171,3 +146,49 @@ class CardVideo(BaseModel):
     class Meta:
         verbose_name = 'Видео заведения'
         verbose_name_plural = 'Видео заведения'
+
+
+class CardWorkDay(BaseModel):
+    """
+    Модель дней работы заведения
+    """
+
+    DAYSOFTHEWEEK = (
+        ('Monday', 'Понедельник'),
+        ('Tuesday', 'Вторник'),
+        ('Wednesday', 'Среда'),
+        ('Thursday', 'Четверг'),
+        ('Friday', 'Пятница'),
+        ('Saturday', 'Суббота'),
+        ('Sunday', 'Воскресенье'),
+    )
+
+    card = models.ForeignKey(
+        Card,
+        on_delete=models.CASCADE,
+        related_name='work_days',
+        verbose_name='Карточка'
+    )
+
+    dayoftheweek = models.CharField(
+        max_length=10,
+        choices=DAYSOFTHEWEEK,
+        verbose_name='День недели'
+    )
+
+    starts_work = models.TimeField(
+        verbose_name='Время открытия'
+    )
+
+    stops_work = models.TimeField(
+        verbose_name='Время закрытия'
+    )
+
+
+    def __str__(self):
+        return f'День работы для {self.card}'
+
+
+    class Meta:
+        verbose_name = 'День работы'
+        verbose_name_plural = 'Дни работы'

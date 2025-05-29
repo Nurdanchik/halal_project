@@ -7,6 +7,7 @@ from apps.cards.models.card import Card
 from apps.cards.models.featured_card import FeaturedCard
 from apps.cards.serializers.card_serializers import CardListSerializer
 from apps.cards.serializers.featured_card_serializers import FeaturedCardListSerializer
+from apps.cards.serializers.type_serializers import TypeSerializer
 from apps.cards.services.card_service import get_all_cards
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
@@ -14,7 +15,10 @@ from django.db.models import Q
 from rest_framework import generics
 from rest_framework.generics import RetrieveAPIView
 from apps.cards.models.card import Card
+from apps.cards.models.type import Type
 from apps.cards.serializers.card_full_info_serializers import CardFullInfoSerializer
+from rest_framework.exceptions import ValidationError
+
 
 class CardDetailView(RetrieveAPIView):
     queryset = Card.objects.all().prefetch_related('photos', 'videos', 'reviews')
@@ -163,3 +167,64 @@ class CardListAPIView(generics.ListAPIView):
             queryset = queryset.filter(category__id=cat_id)
 
         return queryset
+    
+
+class TypesByCategoryAPIView(ListAPIView):
+    serializer_class = TypeSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='cat_id',
+                description='ID категории, например: Еда, Спорт и т.д.',
+                required=True,
+                type=int,
+                location=OpenApiParameter.QUERY,
+                examples=[
+                    OpenApiExample("Еда", value=1, summary="cat_id=1"),
+                    OpenApiExample("Спорт", value=2, summary="cat_id=2"),
+                ],
+            )
+        ],
+        description="Возвращает все типы карточек (например, Чайхана, Кафе и т.д.) по категории."
+    )
+    def get_queryset(self):
+        cat_id = self.request.query_params.get("cat_id")
+
+        if not cat_id:
+            raise ValidationError({"cat_id": "Этот параметр обязателен."})
+
+        return Type.objects.filter(cards__category__id=cat_id).distinct()
+
+
+class CardsByTypeAPIView(ListAPIView):
+    serializer_class = CardListSerializer
+    pagination_class = CustomPagination
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='cat_id',
+                description='ID категории (например: Еда, Спорт)',
+                required=True,
+                type=int,
+                location=OpenApiParameter.QUERY,
+            ),
+            OpenApiParameter(
+                name='type_id',
+                description='ID типа (например: Чайхана, Кафе)',
+                required=True,
+                type=int,
+                location=OpenApiParameter.QUERY,
+            ),
+        ],
+        description="Возвращает карточки, относящиеся к категории и типу"
+    )
+    def get_queryset(self):
+        cat_id = self.request.query_params.get("cat_id")
+        type_id = self.request.query_params.get("type_id")
+
+        if not cat_id or not type_id:
+            raise ValidationError("Параметры cat_id и type_id обязательны.")
+
+        return Card.objects.filter(category__id=cat_id, type__id=type_id)

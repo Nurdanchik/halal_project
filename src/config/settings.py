@@ -52,6 +52,8 @@ CORS_ALLOWED_HEADERS = [
 CSRF_TRUSTED_ORIGINS = [
     "https://www.zahalal.ru",
     "https://zahalal.ru",
+    "http://localhost:3000",
+    
 ]
 
 SECURE_SSL_REDIRECT = True

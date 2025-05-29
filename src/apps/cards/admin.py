@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 
-from .models.card import Card, CardPhoto, CardVideo
+from .models.card import Card, CardPhoto, CardVideo, CardWorkDay
 from .models.featured_card import FeaturedCard
 from .models.location import Place
 from .models.type import Type
@@ -10,9 +10,14 @@ from .models.type import Type
 admin.site.register(Place)
 
 
-class FeaturedCardInline(admin.TabularInline):
-    model = FeaturedCard
-    extra = 1
+class CardVideoInline(admin.TabularInline):
+    model = CardVideo
+    extra = 3
+
+
+class CardWorkDayInline(admin.TabularInline):
+    model = CardWorkDay
+    extra = 3
 
 
 class CardPhotoInline(admin.TabularInline):
@@ -21,11 +26,11 @@ class CardPhotoInline(admin.TabularInline):
 
 
 admin.site.register(Type)
-admin.site.register(CardVideo)
+admin.site.register(FeaturedCard)
 
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
-    inlines = [CardPhotoInline, FeaturedCardInline]  
+    inlines = [CardPhotoInline, CardVideoInline]  
     list_display = ('id', 'title', 'category', 'phone_number') 
     search_fields = ('title', 'description')
 
@@ -36,7 +41,13 @@ class CardPhotoAdmin(admin.ModelAdmin):
     search_fields = ('card__title',)
 
 
-@admin.register(FeaturedCard)
-class FeaturedCardAdmin(admin.ModelAdmin):
-    list_display = ('id', 'card')
+@admin.register(CardVideo)
+class CardVideoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'card', 'video')
+    search_fields = ('card__title',)
+
+
+@admin.register(CardWorkDay)
+class CardWorkDayAdmin(admin.ModelAdmin):
+    list_display = ('id', 'card', 'dayoftheweek', 'starts_work', 'stops_work')
     search_fields = ('card__title',)

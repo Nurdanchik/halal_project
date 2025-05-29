@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.cards.models.card import Card, CardPhoto, CardVideo
+from apps.cards.models.card import Card, CardPhoto, CardVideo, CardWorkDay
 from apps.reviews.serializers.review import ReviewSerializer
 from common.pagination import CustomPagination
 
@@ -16,22 +16,29 @@ class CardVideoSerializer(serializers.ModelSerializer):
         fields = ['id', 'video']
 
 
+class CardWorkDaySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CardWorkDay
+        fields = ['id', 'dayoftheweek', 'starts_work', 'stops_work']
+
+
 class CardFullInfoSerializer(serializers.ModelSerializer):
     category = serializers.StringRelatedField()
     type = serializers.StringRelatedField()
     location = serializers.SerializerMethodField()
     photos = CardPhotoSerializer(many=True, read_only=True)
     videos = CardVideoSerializer(many=True, read_only=True)
+    work_days = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
     face_img = serializers.ImageField()
-    
+
     class Meta:
         model = Card
         fields = [
             'id', 'title', 'face_img', 'category', 'type', 'description',
             'phone_number', 'whatsapp', 'telegram', 'site',
-            'start_work', 'stops_work', 'work_days', 'location',
-            'address', 'city', 'video', 'photos', 'videos', 'reviews'
+            'work_days', 'location', 'address', 'city',
+            'photos', 'videos', 'reviews'
         ]
 
     def get_location(self, obj):
@@ -43,10 +50,11 @@ class CardFullInfoSerializer(serializers.ModelSerializer):
             }
         return None
 
+    def get_work_days(self, obj):
+        work_days_qs = obj.cardworkday_set.all()
+        return CardWorkDaySerializer(work_days_qs, many=True).data
+
     def get_reviews(self, obj):
-        """
-        Пагинируем и фильтруем отзывы к карточке
-        """
         request = self.context.get('request')
         reviews_qs = obj.reviews.filter(is_approved=True).order_by('-created_at')
 

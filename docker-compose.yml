@@ -94,35 +94,35 @@ services:
   #     - redis
   
  
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    restart: always
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - static_volume:/usr/src/app/static/
-      - media_volume:/usr/src/app/media/
-      - /etc/letsencrypt:/etc/letsencrypt
-      - /var/www/certbot:/var/www/certbot
-    ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - user.api
-    networks:
-      - dev
+   nginx:
+     image: nginx:latest
+     container_name: nginx
+     restart: always
+     volumes:
+       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+       - static_volume:/usr/src/app/static/
+       - media_volume:/usr/src/app/media/
+       - /etc/letsencrypt:/etc/letsencrypt
+       - /var/www/certbot:/var/www/certbot
+     ports:
+       - "80:80"
+       - "443:443"
+     depends_on:
+       - user.api
+     networks:
+       - dev
 
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - /var/www/certbot:/var/www/certbot
-    entrypoint: sh -c "certbot certonly --webroot -w /var/www/certbot --email placetest00@gmail.com --agree-tos --no-eff-email --force-renewal --non-interactive --quiet -d zahalal.ru
-     -d www.zahalal.ru
-     && nginx -s reload && sleep 89d"
-    networks:
-      - dev
+   certbot:
+     image: certbot/certbot
+     container_name: certbot
+     volumes:
+       - /etc/letsencrypt:/etc/letsencrypt
+       - /var/www/certbot:/var/www/certbot
+     entrypoint: sh -c "certbot certonly --webroot -w /var/www/certbot --email placetest00@gmail.com --agree-tos --no-eff-email --force-renewal --non-interactive --quiet -d zahalal.ru
+      -d www.zahalal.ru
+      && nginx -s reload && sleep 89d"
+     networks:
+       - dev
 
 
 volumes:
