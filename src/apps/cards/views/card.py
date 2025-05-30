@@ -126,6 +126,7 @@ class CardSearcherListAPIView(generics.ListAPIView):
 class CardListAPIView(generics.ListAPIView):
     queryset = Card.objects.all()
     serializer_class = CardListSerializer
+    pagination_class = CustomPagination
 
     @extend_schema(
         parameters=[
@@ -186,14 +187,16 @@ class TypesByCategoryAPIView(ListAPIView):
                 ],
             )
         ],
-        description="Возвращает все типы карточек (например, Чайхана, Кафе и т.д.) по категории."
+        description="Возвращает все типы карточек (например, Чайхана, Кафе и т.д.) по категории.",
+        responses=TypeSerializer(many=True),
     )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
     def get_queryset(self):
         cat_id = self.request.query_params.get("cat_id")
-
         if not cat_id:
             raise ValidationError({"cat_id": "Этот параметр обязателен."})
-
         return Type.objects.filter(cards__category__id=cat_id).distinct()
 
 
@@ -218,8 +221,12 @@ class CardsByTypeAPIView(ListAPIView):
                 location=OpenApiParameter.QUERY,
             ),
         ],
-        description="Возвращает карточки, относящиеся к категории и типу"
+        description="Возвращает карточки, относящиеся к категории и типу.",
+        responses=CardListSerializer(many=True),
     )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
     def get_queryset(self):
         cat_id = self.request.query_params.get("cat_id")
         type_id = self.request.query_params.get("type_id")
