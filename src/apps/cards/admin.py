@@ -17,7 +17,7 @@ class CardVideoInline(admin.TabularInline):
 
 class CardWorkDayInline(admin.TabularInline):
     model = CardWorkDay
-    extra = 3
+    extra = 7
 
 
 class CardPhotoInline(admin.TabularInline):
@@ -30,7 +30,7 @@ admin.site.register(FeaturedCard)
 
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
-    inlines = [CardPhotoInline, CardVideoInline]  
+    inlines = [CardPhotoInline, CardVideoInline, CardWorkDayInline]
     list_display = ('id', 'title', 'category', 'phone_number') 
     search_fields = ('title', 'description')
 
