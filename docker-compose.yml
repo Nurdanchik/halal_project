@@ -8,8 +8,8 @@ volumes:
     name: tour_static_volume
   media_volume:
     name: tour_media_volume
+  redis_data:  # <--- добавили volume под Redis
   # postgres_data:
-  # redis_data:
   # rabbitmq_data:
 
 services:
@@ -21,14 +21,15 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - postgres.db
-      # - redis
-      # - rabbitmq
+      - redis  # <--- подключаем Redis
     restart: unless-stopped
     networks:
       - dev
     volumes:
       - static_volume:/usr/src/app/static/
       - media_volume:/usr/src/app/media/
+    environment:
+      - REDIS_URL=redis://redis:6379/1  # <--- переменная для Django
 
   postgres.db:
     image: postgres:17.2-alpine
@@ -43,63 +44,14 @@ services:
       start_period: 30s
       timeout: 10s
 
-  # redis:
-  #   image: redis:latest
-  #   container_name: redis-store
-  #   volumes:
-  #     - redis_data:/data/
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - dev
-
-  # rabbitmq:
-  #   image: rabbitmq:3.13-management
-  #   container_name: rabbitmq-store
-  #   hostname: rabbitmq
-  #   ports:
-  #     - "15672:15672"
-  #     - "5672:5672"
-  #   volumes:
-  #     - rabbitmq_data:/var/lib/rabbitmq/
-  #     - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-  #   networks:
-  #     - dev
-
-  # celery:
-  #   build:
-  #     context: .
-  #   command: ['celery', '--app=config', 'worker', '--loglevel=info', '--pool=solo']
-  #   volumes:
-  #     - ./:/usr/src/app/
-  #   container_name: celery-store
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - BROKER_URL=${RABBIT_URL}
-  #     - RESULT_BACKEND=${REDIS_URL}
-  #     - BROKER_CONNECTION_RETRY=300
-  #   depends_on:
-  #     - postgres.db.tour
-  #     - redis
-  #     - rabbitmq
-  #     - user.api.tour
-  #   networks:
-  #     - dev
-
-  # celery-beat:
-  #   build:
-  #     context: .
-  #   command: ['celery', '-A', 'config', 'beat', '-l', 'info']
-  #   volumes:
-  #     - ./:/usr/src/app/
-  #   container_name: celery-beat-store
-  #   depends_on:
-  #     - user.api.tour
-  #     - postgres.db.tour
-  #     - rabbitmq
-  #     - celery
-  #     - redis
+  redis:
+    image: redis:7
+    container_name: redis-store
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data/
+    networks:
+      - dev
 
   nginx:
     image: nginx:latest
