@@ -11,6 +11,7 @@ urlpatterns = [
     path('cards/', include('apps.cards.urls')),
     path('reviews/', include('apps.reviews.urls')),
     path('categories/', include('apps.categories.urls')),
+    path('news/', include('apps.news.urls')),
 ]
 
 
