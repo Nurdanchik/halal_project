@@ -83,7 +83,7 @@ INSTALLED_APPS = [
     'apps.cards',
     'apps.categories',
     'apps.reviews',
-    'apps.users',
+    'apps.news',
 ]
 
 MIDDLEWARE = [

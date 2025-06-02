@@ -2,6 +2,7 @@ from rest_framework import serializers
 from apps.cards.models.card import Card, CardPhoto, CardVideo, CardWorkDay
 from apps.reviews.serializers.review import ReviewSerializer
 from common.pagination import CustomPagination
+from apps.reviews.services.review_service import get_average_rating_for_card
 
 
 class CardPhotoSerializer(serializers.ModelSerializer):
@@ -31,15 +32,19 @@ class CardFullInfoSerializer(serializers.ModelSerializer):
     work_days = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
     face_img = serializers.ImageField()
+    average_rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Card
         fields = [
             'id', 'title', 'face_img', 'category', 'type', 'description',
             'phone_number', 'whatsapp', 'telegram', 'site',
-            'work_days', 'location', 'address', 'city',
+            'work_days', 'location', 'address', 'city', 'average_rating',
             'photos', 'videos', 'reviews'
         ]
+
+    def get_average_rating(self, obj):
+        return get_average_rating_for_card(obj)
 
     def get_location(self, obj):
         if obj.location:

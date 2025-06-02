@@ -1,9 +1,10 @@
 from rest_framework import serializers
+from apps.cards.serializers.card_serializers import CardListSerializer
 from apps.cards.models.featured_card import FeaturedCard
 
 class FeaturedCardListSerializer(serializers.ModelSerializer):
-    card_id = serializers.IntegerField(source='card.id')
+    card = CardListSerializer()
 
     class Meta:
         model = FeaturedCard
-        fields = ['id', 'card_id']
+        fields = ['id', 'card']
