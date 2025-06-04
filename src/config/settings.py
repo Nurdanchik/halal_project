@@ -31,6 +31,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://www.zahalal.ru",
     "https://zahalal.ru",
+    "https://zahalal.vercel.app",
     
 ]
 
